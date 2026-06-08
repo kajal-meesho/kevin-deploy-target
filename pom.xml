@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+      Kevin Week 4 deploy target — a minimal Spring Boot service.
+      Kevin uses this repo when he wants to demonstrate the end-to-end pipeline:
+        /kevin SPSE-X → plan → impl → DOCKER TESTS (mvn test against THIS pom)
+                       → PR → MERGE → DOCKER BUILD (Dockerfile in this repo)
+                       → canary container running on localhost
+                       → evaluator agent reads metrics → promote or rollback
+      Kept intentionally tiny so test runs finish in a few seconds.
+    -->
+
+    <groupId>com.example</groupId>
+    <artifactId>kevin-deploy-target</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.18</version>
+        <relativePath/>
+    </parent>
+
+    <properties>
+        <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <!-- Web layer — gives us /health out of the box -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Spring Boot Actuator — provides a real /actuator/health endpoint
+             that Kevin's canary deploy client probes for readiness -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Test layer -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>kevin-deploy-target</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
